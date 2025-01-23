@@ -7,6 +7,7 @@ import RegisterPage from './Pages/RegisterPage';
 import HomePage from './Pages/HomePage';
 import ProfilePage from './Pages/ProfilePage';
 import ProfileUpdatePage from './Pages/ProfileUpdatePage';
+import MyFlats from './Pages/MyFlats';
 
 const ProtectedRoute = ({ children }) => {
     const { currentUser } = useAuth(); // Suponiendo que useAuth devuelve el usuario actual
@@ -27,6 +28,7 @@ const App = () => {
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />  {/* Protege la ruta de perfil */}
                     <Route path="/profile/update/:userId" element={<ProtectedRoute><ProfileUpdatePage /></ProtectedRoute>} />  {/* Protege la ruta de actualización */}
+                    <Route path="/my-flats" element={<MyFlats />} />
                 </Routes>
             </Router>
         </AuthProvider>

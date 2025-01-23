@@ -1,15 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Trash2 } from 'lucide-react';
-import { Flat } from '../types';
 
-interface FlatsTableProps {
-  flats: Flat[];
-  onToggleFavorite: (flatId: string) => void;
-  onDelete?: (flatId: string) => void;
-}
-
-export default function FlatsTable({ flats, onToggleFavorite, onDelete }: FlatsTableProps) {
+export default function FlatsTable({ flats, onToggleFavorite, onDelete }) {
   return (
     <div className="mt-4 overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
