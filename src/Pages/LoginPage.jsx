@@ -8,21 +8,24 @@ const LoginPage = () => {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    // Toggle visibility of password
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
     };
 
+    // Validate form input
     const handleValidation = (email, password) => {
         if (!email || !password) {
-            setError("Por favor, ingrese un email y una contraseña.");
+            setError('Por favor, ingrese un email y una contraseña.');
             return false;
         }
         return true;
     };
 
+    // Handle the login process
     const handleLogin = async (email, password) => {
         const userService = new UserService();
         try {
@@ -40,16 +43,21 @@ const LoginPage = () => {
                 const localStorageService = new LocalStorageService();
                 localStorageService.addLoggedUser(userData);
 
+                // Store the userId in localStorage for future access
+                localStorage.setItem('userId', userData.userId);
+
                 alert(result.message);
+                navigate('/');  // Redirect to home page after successful login
             } else {
-                setError("Error al recibir datos del usuario.");
+                setError('Error al recibir datos del usuario.');
             }
         } catch (err) {
-            console.error("Error de login:", err);
-            setError("Hubo un problema al intentar iniciar sesión. Por favor, intente nuevamente.");
+            console.error('Error de login:', err);
+            setError('Hubo un problema al intentar iniciar sesión. Por favor, intente nuevamente.');
         }
     };
 
+    // Handle form submission
     const submit = (e) => {
         e.preventDefault();
         const email = emailRef.current?.value || '';
@@ -72,39 +80,45 @@ const LoginPage = () => {
                     </div>
                     <form onSubmit={submit} className="flex flex-col gap-4 p-6">
                         <div className="relative h-11 w-full min-w-[200px]">
-                            <input 
-                                placeholder="Email" 
-                                ref={emailRef} 
-                                required 
-                                autoComplete="email" 
+                            <input
+                                placeholder="Email"
+                                ref={emailRef}
+                                required
+                                autoComplete="email"
                                 type="email"
-                                className="peer h-full w-full rounded-md border-2 border-gray-700 bg-gray-700 px-3 py-3 font-sans text-sm font-normal text-white outline-none transition-all placeholder-shown:border-2 placeholder-shown:border-gray-700 focus:border-2 focus:border-blue-500 focus:outline-none disabled:border-0 disabled:bg-blue-gray-50" 
+                                className="peer h-full w-full rounded-md border-2 border-gray-700 bg-gray-700 px-3 py-3 font-sans text-sm font-normal text-white outline-none transition-all placeholder-shown:border-2 placeholder-shown:border-gray-700 focus:border-2 focus:border-blue-500 focus:outline-none disabled:border-0 disabled:bg-blue-gray-50"
                             />
                         </div>
                         <div className="relative h-11 w-full min-w-[200px]">
-                            <input 
-                                placeholder="Password" 
-                                ref={passwordRef} 
-                                required 
-                                autoComplete="current-password" 
-                                type={showPassword ? 'text' : 'password'} 
-                                className="peer h-full w-full rounded-md border-2 border-gray-700 bg-gray-700 px-3 py-3 font-sans text-sm font-normal text-white outline-none transition-all placeholder-shown:border-2 placeholder-shown:border-gray-700 focus:border-2 focus:border-blue-500 focus:outline-none disabled:border-0 disabled:bg-blue-gray-50" 
+                            <input
+                                placeholder="Password"
+                                ref={passwordRef}
+                                required
+                                autoComplete="current-password"
+                                type={showPassword ? 'text' : 'password'}
+                                className="peer h-full w-full rounded-md border-2 border-gray-700 bg-gray-700 px-3 py-3 font-sans text-sm font-normal text-white outline-none transition-all placeholder-shown:border-2 placeholder-shown:border-gray-700 focus:border-2 focus:border-blue-500 focus:outline-none disabled:border-0 disabled:bg-blue-gray-50"
                             />
-                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={togglePasswordVisibility}>
+                            <span
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                                onClick={togglePasswordVisibility}
+                            >
                                 {showPassword ? '🙈' : '👁️'}
                             </span>
                         </div>
                         {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
                         <div className="p-6 pt-0">
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 className="block w-full select-none rounded-lg bg-gradient-to-tr from-indigo-500 to-blue-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-700/20 transition-all hover:shadow-lg hover:shadow-blue-700/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                             >
                                 Login
                             </button>
                             <p className="mt-6 flex justify-center font-sans text-sm font-light leading-normal text-gray-200 antialiased">
                                 Don't have an account?
-                                <a className="ml-1 block font-sans text-sm font-bold leading-normal text-blue-500 antialiased" href="/register">
+                                <a
+                                    className="ml-1 block font-sans text-sm font-bold leading-normal text-blue-500 antialiased"
+                                    href="/register"
+                                >
                                     Register
                                 </a>
                             </p>
@@ -117,4 +131,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

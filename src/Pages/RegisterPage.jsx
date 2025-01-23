@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setDoc, doc } from 'firebase/firestore';
-import { db } from '../firebaseConfig'; // Asegúrate de que db esté correctamente configurado
-import { v4 as uuidv4 } from 'uuid'; // Usamos uuid para generar un ID único
+import { db } from '../firebaseConfig';
+import { v4 as uuidv4 } from 'uuid';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -48,7 +48,6 @@ const RegisterPage = () => {
             gender: genderRef.current.value
         };
 
-        // Validaciones
         if (!validate.email(values.email)) return setErrorMessage('El correo electrónico no tiene un formato válido.');
         if (!validate.name(values.firstName) || !validate.name(values.lastName)) return setErrorMessage('Los nombres deben tener al menos 2 caracteres.');
         if (!validate.age(values.birthDate)) return setErrorMessage('La edad debe estar entre 18 y 120 años.');
@@ -56,18 +55,17 @@ const RegisterPage = () => {
         if (values.password !== values.confirmPassword) return setErrorMessage('Las contraseñas no son iguales.');
 
         try {
-            // Generar un ID único para el usuario con uuid
-            const userId = uuidv4(); // Esto genera un ID único
+            
+            const userId = uuidv4(); 
 
-            // Guardar los datos en Firestore
-            const userRef = doc(db, 'users', userId); // Usamos el ID único generado
+            const userRef = doc(db, 'users', userId); 
             await setDoc(userRef, {
                 email: values.email,
                 firstName: values.firstName,
                 lastName: values.lastName,
                 birthDate: values.birthDate,
                 gender: values.gender,
-                password: values.password, // Nota: ¡No guardar contraseñas sin encriptar en producción!
+                password: values.password, 
             });
 
             navigate('/login');
@@ -104,7 +102,8 @@ const RegisterPage = () => {
     );
 };
 
-const InputField = ({ label, type = 'text', ref }) => (
+// Componente InputField con forwardRef
+const InputField = React.forwardRef(({ label, type = 'text' }, ref) => (
     <div className="mb-2">
         <input
             placeholder={label}
@@ -113,9 +112,10 @@ const InputField = ({ label, type = 'text', ref }) => (
             ref={ref}
         />
     </div>
-);
+));
 
-const PasswordField = ({ label, ref, showPassword, toggleVisibility }) => (
+// Componente PasswordField con forwardRef
+const PasswordField = React.forwardRef(({ label, showPassword, toggleVisibility }, ref) => (
     <div className="relative mb-2">
         <input
             placeholder={label}
@@ -127,9 +127,10 @@ const PasswordField = ({ label, ref, showPassword, toggleVisibility }) => (
             {showPassword ? '🙈' : '👁️'}
         </span>
     </div>
-);
+));
 
-const SelectField = ({ label, ref }) => (
+// Componente SelectField con forwardRef
+const SelectField = React.forwardRef(({ label }, ref) => (
     <div className="mb-2">
         <label htmlFor={label} className="text-sm text-gray-200">{label}</label>
         <select
@@ -141,8 +142,9 @@ const SelectField = ({ label, ref }) => (
             <option value="other">Other</option>
         </select>
     </div>
-);
+));
 
 export default RegisterPage;
+
 
 
