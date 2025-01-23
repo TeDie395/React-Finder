@@ -1,23 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Home, User, Heart, LogOut, Users, Building, Search, Trash2 } from 'lucide-react';
-import { auth } from '../firebaseConfig';
-import { signOut } from 'firebase/auth';
 
 interface HeaderProps {
-  user: { fullName: string; role: string; } | null;
+  user: { firstName: string; lastName: string; role: string } | null;
 }
 
 export default function Header({ user }: HeaderProps) {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate('/login');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+  const handleLogout = () => {
+    navigate('/login', { replace: true }); 
   };
 
   return (
@@ -32,16 +25,25 @@ export default function Header({ user }: HeaderProps) {
           </div>
           {user && (
             <div className="flex items-center space-x-8">
-              <p className="text-gray-600 ml-4">Hola, <span className="font-semibold">{user.fullName}</span></p>
+              <p className="text-gray-600 ml-4">
+                Hola, <span className="font-semibold">{user.firstName} {user.lastName}</span>
+              </p>
               <nav className="flex items-center space-x-4">
                 <Link to="/" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                   <Search className="h-5 w-5" />
                   <span>Buscar Flats</span>
                 </Link>
-                <Link to="/profile" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
-                  <User className="h-5 w-5" />
-                  <span>Mi Perfil</span>
-                </Link>
+                {user ? (
+                  <Link to="/profile" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
+                    <User className="h-5 w-5" />
+                    <span>Mi Perfil</span>
+                  </Link>
+                ) : (
+                  <button onClick={() => navigate('/login')} className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
+                    <User className="h-5 w-5" />
+                    <span>Iniciar sesión</span>
+                  </button>
+                )}
                 <Link to="/my-flats" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                   <Home className="h-5 w-5" />
                   <span>Mis Flats</span>
@@ -72,4 +74,7 @@ export default function Header({ user }: HeaderProps) {
     </header>
   );
 }
+
+
+
 

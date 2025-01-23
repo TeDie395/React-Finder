@@ -1,40 +1,45 @@
 import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Importa getFirestore, doc y getDoc
 
 const firebaseConfig = {
-  // Tu configuración de Firebase
-  apiKey: "AIzaSyAXH0YUX24fpX_YtAptxwMOP8T89aKfbYM",
-  authDomain: "flatfinder-ebcc4.firebaseapp.com",
-  projectId: "flatfinder-ebcc4",
-  storageBucket: "flatfinder-ebcc4.firebasestorage.app",
-  messagingSenderId: "1049242656808",
-  appId: "1:1049242656808:web:a0dc70c0926e6d8c1b951d",
-  measurementId: "G-RQMQB43H3P"
+    apiKey: "AIzaSyAXH0YUX24fpX_YtAptxwMOP8T89aKfbYM",
+    authDomain: "flatfinder-ebcc4.firebaseapp.com",
+    projectId: "flatfinder-ebcc4",
+    storageBucket: "flatfinder-ebcc4.firebasestorage.app",
+    messagingSenderId: "1049242656808",
+    appId: "1:1049242656808:web:a0dc70c0926e6d8c1b951d",
+    measurementId: "G-RQMQB43H3P"
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app); // Asegúrate de definir getFirestore
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Añadir la función getUserDataFromFirebase
-export async function getUserDataFromFirebase() {
+export const getUserDataFromFirebase = async (userId) => {
   try {
-    const user = auth.currentUser;
-    if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        return userDoc.data();
-      } else {
-        throw new Error('No user data found!');
-      }
-    } else {
-      throw new Error('No authenticated user!');
+    const userRef = doc(db, 'users', userId); 
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data();
     }
+
+    return null;
   } catch (error) {
-    console.error('Error fetching user data:', error);
-    throw error;
+    console.error('Error obteniendo datos del usuario:', error);
+    throw error; 
   }
-}
+};
+
+export { db, auth };
+
+
+
+
+
+
+
+
+
 

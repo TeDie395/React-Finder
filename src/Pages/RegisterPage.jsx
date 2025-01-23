@@ -1,98 +1,79 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig'; 
+import { db } from '../firebaseConfig'; // Asegúrate de que db esté correctamente configurado
+import { v4 as uuidv4 } from 'uuid'; // Usamos uuid para generar un ID único
 
 const RegisterPage = () => {
-    const email = useRef();
-    const password = useRef();
-    const confirmPassword = useRef();
-    const firstName = useRef();
-    const lastName = useRef();
-    const birthDate = useRef();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const validatePassword = (password) => {
-        const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-        return regex.test(password);
-    };
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const confirmPasswordRef = useRef();
+    const firstNameRef = useRef();
+    const lastNameRef = useRef();
+    const birthDateRef = useRef();
+    const genderRef = useRef();
 
-    const validateEmail = (email) => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    };
-
-    const validateNames = (name) => {
-        return name.length >= 2;
-    };
-
-    const validateAge = (birthDate) => {
-        const today = new Date();
-        const birth = new Date(birthDate);
-        let age = today.getFullYear() - birth.getFullYear();
-        const m = today.getMonth() - birth.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-            age--;
+    const validate = {
+        password: (password) => /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(password),
+        email: (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+        name: (name) => name.length >= 2,
+        age: (birthDate) => {
+            const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+            return age >= 18 && age <= 120;
         }
-        return age >= 18 && age <= 120;
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const togglePasswordVisibility = (type) => {
+        if (type === 'password') {
+            setShowPassword((prev) => !prev);
+        } else if (type === 'confirmPassword') {
+            setShowConfirmPassword((prev) => !prev);
+        }
     };
 
-    const toggleConfirmPasswordVisibility = () => {
-        setShowConfirmPassword(!showConfirmPassword);
-    };
-
-    const submit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        const values = {
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
+            confirmPassword: confirmPasswordRef.current.value,
+            firstName: firstNameRef.current.value,
+            lastName: lastNameRef.current.value,
+            birthDate: birthDateRef.current.value,
+            gender: genderRef.current.value
+        };
 
-        if (!validateEmail(email.current.value)) {
-            alert('El correo electrónico no tiene un formato válido.');
-            return;
-        }
-
-        if (!validateNames(firstName.current.value) || !validateNames(lastName.current.value)) {
-            alert('Los nombres deben tener al menos 2 caracteres.');
-            return;
-        }
-
-        if (!validateAge(birthDate.current.value)) {
-            alert('La edad debe estar entre 18 y 120 años.');
-            return;
-        }
-
-        if (!validatePassword(password.current.value)) {
-            alert('La contraseña debe tener al menos 6 caracteres, con letras, números y un carácter especial.');
-            return;
-        }
-
-        if (password.current.value !== confirmPassword.current.value) {
-            alert('Las contraseñas no coinciden.');
-            return;
-        }
+        // Validaciones
+        if (!validate.email(values.email)) return setErrorMessage('El correo electrónico no tiene un formato válido.');
+        if (!validate.name(values.firstName) || !validate.name(values.lastName)) return setErrorMessage('Los nombres deben tener al menos 2 caracteres.');
+        if (!validate.age(values.birthDate)) return setErrorMessage('La edad debe estar entre 18 y 120 años.');
+        if (!validate.password(values.password)) return setErrorMessage('La contraseña debe cumplir con los requisitos.');
+        if (values.password !== values.confirmPassword) return setErrorMessage('Las contraseñas no son iguales.');
 
         try {
-            const { user } = await createUserWithEmailAndPassword(
-                auth,
-                email.current.value,
-                password.current.value
-            );
-            await setDoc(doc(db, 'users', user.uid), {
-                firstName: firstName.current.value,
-                lastName: lastName.current.value,
-                email: email.current.value,
-                birthDate: birthDate.current.value,
+            // Generar un ID único para el usuario con uuid
+            const userId = uuidv4(); // Esto genera un ID único
+
+            // Guardar los datos en Firestore
+            const userRef = doc(db, 'users', userId); // Usamos el ID único generado
+            await setDoc(userRef, {
+                email: values.email,
+                firstName: values.firstName,
+                lastName: values.lastName,
+                birthDate: values.birthDate,
+                gender: values.gender,
+                password: values.password, // Nota: ¡No guardar contraseñas sin encriptar en producción!
             });
+
+            navigate('/login');
             alert('Registro exitoso');
-            navigate('/home');
         } catch (error) {
-            setErrorMessage(error.message);
+            setErrorMessage(`Error: ${error.message}`);
         }
     };
 
@@ -100,54 +81,68 @@ const RegisterPage = () => {
         <div className="flex flex-col items-center justify-center h-screen bg-white">
             <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-4">
                 <h2 className="text-2xl font-bold text-gray-200 mb-4 text-center">Register</h2>
-                <form onSubmit={submit} className="space-y-2">
-                    <div className="flex space-x-2 mb-2">
-                        <div>
-                            <input placeholder="First Name" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="text" ref={firstName} />
-                        </div>
-                        <div>
-                            <input placeholder="Last Name" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="text" ref={lastName} />
-                        </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex space-x-4">
+                        <InputField label="First Name" ref={firstNameRef} />
+                        <InputField label="Last Name" ref={lastNameRef} />
                     </div>
-                    <div className="mb-2">
-                        <input placeholder="Email" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="email" ref={email} />
-                    </div>
-                    <div className="relative mb-2">
-                        <input placeholder="Password" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" id="password" type={showPassword ? 'text' : 'password'} ref={password} autoComplete="new-password" />
-                        <span onClick={togglePasswordVisibility} className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
-                            {showPassword ? '🙈' : '👁️'}
-                        </span>
-                    </div>
-                    <div className="relative mb-2">
-                        <input placeholder="Confirm Password" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} ref={confirmPassword} autoComplete="new-password" />
-                        <span onClick={toggleConfirmPasswordVisibility} className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
-                            {showConfirmPassword ? '🙈' : '👁️'}
-                        </span>
-                    </div>
-                    <div className="mb-2">
-                        <label htmlFor="gender" className="text-sm text-gray-200">Gender</label>
-                        <select className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" id="gender">
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div className="mb-2">
-                        <label htmlFor="age" className="text-sm text-gray-200">Age</label>
-                        <input className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" id="age" type="date" ref={birthDate} />
-                    </div>
-                    <p className="text-white text-center mb-4">
-                        Already have an account? <a className="text-blue-500 hover:underline" href="#" onClick={() => navigate('/')}>Login</a>
-                    </p>
+                    <InputField label="Email" type="email" ref={emailRef} />
+                    <PasswordField label="Password" ref={passwordRef} showPassword={showPassword} toggleVisibility={() => togglePasswordVisibility('password')} />
+                    <PasswordField label="Confirm Password" ref={confirmPasswordRef} showPassword={showConfirmPassword} toggleVisibility={() => togglePasswordVisibility('confirmPassword')} />
+                    <SelectField label="Gender" ref={genderRef} />
+                    <InputField label="Birth Date" type="date" ref={birthDateRef} />
+
                     <div className="flex justify-center">
-                        <button className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-2 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150" type="submit">Register</button>
+                        <button type="submit" className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-2 hover:bg-indigo-600 transition ease-in-out duration-150">
+                            Register
+                        </button>
                     </div>
                 </form>
                 {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
             </div>
         </div>
     );
-}
+};
+
+const InputField = ({ label, type = 'text', ref }) => (
+    <div className="mb-2">
+        <input
+            placeholder={label}
+            className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+            type={type}
+            ref={ref}
+        />
+    </div>
+);
+
+const PasswordField = ({ label, ref, showPassword, toggleVisibility }) => (
+    <div className="relative mb-2">
+        <input
+            placeholder={label}
+            className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+            type={showPassword ? 'text' : 'password'}
+            ref={ref}
+        />
+        <span onClick={toggleVisibility} className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
+            {showPassword ? '🙈' : '👁️'}
+        </span>
+    </div>
+);
+
+const SelectField = ({ label, ref }) => (
+    <div className="mb-2">
+        <label htmlFor={label} className="text-sm text-gray-200">{label}</label>
+        <select
+            className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 w-full focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
+            ref={ref}
+        >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+);
 
 export default RegisterPage;
+
 

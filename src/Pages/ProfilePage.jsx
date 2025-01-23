@@ -1,6 +1,7 @@
+// src/Pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig'; // Importa auth desde firebaseConfig
 import { doc, getDoc } from 'firebase/firestore';
 import { Building } from 'lucide-react';
 
@@ -19,25 +20,29 @@ const ProfilePage = () => {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
-                setUser(user);
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                setUser(user);  // Guardar el usuario en el estado
+                const userDoc = await getDoc(doc(db, 'users', user.uid));  // Obtener los datos del usuario
                 if (userDoc.exists()) {
-                    setProfileData(userDoc.data());
+                    setProfileData(userDoc.data());  // Establecer los datos del perfil
+                } else {
+                    console.log("No such document!");
                 }
             } else {
-                navigate('/login');
+                navigate('/login');  // Redirigir al login si no hay usuario
             }
         });
-        return () => unsubscribe();
-    }, [navigate]);
-    ;
 
+        return () => unsubscribe();  // Limpiar el listener cuando el componente se desmonte
+    }, [navigate]);
+
+    // Función para manejar la edición del perfil
     const handleEdit = () => {
         navigate(`/profile/update/${user.uid}`);
     };
 
+    // Función para navegar a la página de inicio
     const handleGoHome = () => {
-        navigate(`/home`);
+        navigate('/home');
     };
 
     return (
@@ -83,6 +88,33 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,5 +12,9 @@ export default defineConfig({
       host: 'localhost', // Cambiar a localhost
       port: 5174, // Puerto diferente para HMR
     },
+    proxy: {
+      '/api': 'http://localhost:5000' // Asegúrate que el puerto coincide con el de tu servidor backend
+    }
   },
-})
+});
+
