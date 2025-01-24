@@ -11,12 +11,10 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Toggle visibility of password
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
     };
 
-    // Validate form input
     const handleValidation = (email, password) => {
         if (!email || !password) {
             setError('Por favor, ingrese un email y una contraseña.');
@@ -25,39 +23,38 @@ const LoginPage = () => {
         return true;
     };
 
-    // Handle the login process
     const handleLogin = async (email, password) => {
         const userService = new UserService();
         try {
-            const result = await userService.login(email, password);
-
-            if (result && result.data) {
-                const userData = {
-                    userId: result.data.id,
-                    firstName: result.data.firstName,
-                    lastName: result.data.lastName,
-                    email: result.data.email,
-                    role: result.data.role,
-                };
-
-                const localStorageService = new LocalStorageService();
-                localStorageService.addLoggedUser(userData);
-
-                // Store the userId in localStorage for future access
-                localStorage.setItem('userId', userData.userId);
-
-                alert(result.message);
-                navigate('/');  // Redirect to home page after successful login
-            } else {
-                setError('Error al recibir datos del usuario.');
-            }
+          const result = await userService.login(email, password);
+      
+          if (result && result.data) {
+            const userData = {
+              userId: result.data.id,
+              firstName: result.data.firstName,
+              lastName: result.data.lastName,
+              email: result.data.email,
+              role: result.data.role,
+            };
+      
+            const localStorageService = new LocalStorageService();
+            localStorageService.addLoggedUser(userData);
+      
+           
+            localStorage.setItem('loggedUser', JSON.stringify(userData));  
+      
+            alert(result.message);
+            navigate('/home');  
+          } else {
+            setError('Error al recibir datos del usuario.');
+          }
         } catch (err) {
-            console.error('Error de login:', err);
-            setError('Hubo un problema al intentar iniciar sesión. Por favor, intente nuevamente.');
+          console.error('Error de login:', err);
+          setError('Hubo un problema al intentar iniciar sesión. Por favor, intente nuevamente.');
         }
-    };
+      };
+      
 
-    // Handle form submission
     const submit = (e) => {
         e.preventDefault();
         const email = emailRef.current?.value || '';
@@ -131,3 +128,6 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+
+

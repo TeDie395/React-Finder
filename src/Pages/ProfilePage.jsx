@@ -1,7 +1,6 @@
-// src/Pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebaseConfig'; // Importa auth desde firebaseConfig
+import { db } from '../firebaseConfig'; 
 import { doc, getDoc } from 'firebase/firestore';
 import { Building } from 'lucide-react';
 
@@ -18,29 +17,34 @@ const ProfilePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                setUser(user);  // Guardar el usuario en el estado
-                const userDoc = await getDoc(doc(db, 'users', user.uid));  // Obtener los datos del usuario
-                if (userDoc.exists()) {
-                    setProfileData(userDoc.data());  // Establecer los datos del perfil
-                } else {
-                    console.log("No such document!");
-                }
+        const storedUser = localStorage.getItem('loggedUser');
+        
+        if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setUser(userData); 
+            fetchProfileData(userData.uid); 
+        } else {
+            console.log("No user found in localStorage");
+        }
+    }, []);  
+
+    const fetchProfileData = async (uid) => {
+        try {
+            const userDoc = await getDoc(doc(db, 'users', uid));
+            if (userDoc.exists()) {
+                setProfileData(userDoc.data()); 
             } else {
-                navigate('/login');  // Redirigir al login si no hay usuario
+                console.log("No such document!");
             }
-        });
+        } catch (error) {
+            console.error("Error fetching profile data:", error);
+        }
+    };
 
-        return () => unsubscribe();  // Limpiar el listener cuando el componente se desmonte
-    }, [navigate]);
-
-    // Función para manejar la edición del perfil
     const handleEdit = () => {
         navigate(`/profile/update/${user.uid}`);
     };
 
-    // Función para navegar a la página de inicio
     const handleGoHome = () => {
         navigate('/home');
     };
@@ -52,7 +56,7 @@ const ProfilePage = () => {
                     <Building className="h-16 w-auto text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-200 mb-4 text-center">Profile Data</h3>
-                {user && (
+                {user ? (
                     <div className="flex flex-col bg-gray-700 w-full rounded-md py-4 px-6 border border-gray-600">
                         <div className="text-base font-semibold text-gray-200">
                             <p className="mb-2"><strong>Email:</strong> {profileData.email}</p>
@@ -81,6 +85,8 @@ const ProfilePage = () => {
                             </button>
                         </div>
                     </div>
+                ) : (
+                    <div className="text-gray-500">No user logged in</div> 
                 )}
             </div>
         </div>
@@ -88,6 +94,9 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+
+
 
 
 

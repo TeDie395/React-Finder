@@ -102,7 +102,6 @@ const RegisterPage = () => {
     );
 };
 
-// Componente InputField con forwardRef
 const InputField = React.forwardRef(({ label, type = 'text' }, ref) => (
     <div className="mb-2">
         <input
@@ -114,7 +113,6 @@ const InputField = React.forwardRef(({ label, type = 'text' }, ref) => (
     </div>
 ));
 
-// Componente PasswordField con forwardRef
 const PasswordField = React.forwardRef(({ label, showPassword, toggleVisibility }, ref) => (
     <div className="relative mb-2">
         <input
@@ -129,7 +127,6 @@ const PasswordField = React.forwardRef(({ label, showPassword, toggleVisibility 
     </div>
 ));
 
-// Componente SelectField con forwardRef
 const SelectField = React.forwardRef(({ label }, ref) => (
     <div className="mb-2">
         <label htmlFor={label} className="text-sm text-gray-200">{label}</label>
@@ -145,6 +142,3 @@ const SelectField = React.forwardRef(({ label }, ref) => (
 ));
 
 export default RegisterPage;
-
-
-
