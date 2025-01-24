@@ -13,6 +13,7 @@ export default function Home() {
     areaRange: { min: 0, max: 0 },
   });
   const [sortField, setSortField] = useState('');
+<<<<<<< HEAD
   const [user, setUser] = useState({ fullName: 'Usuario', role: 'user' });
 
   // Obtener información del usuario desde localStorage
@@ -36,6 +37,17 @@ export default function Home() {
       let q = query(collection(db, 'flats'));
 
       // Aplicar filtros
+=======
+  const [user, setUser] = useState({ fullName: 'Usuario', role: 'user' }); // Mock user data
+
+  useEffect(() => {
+    fetchFlats();
+  }, [filters, sortField]); 
+  const fetchFlats = async () => {
+    try {
+      let q = collection(db, 'flats');
+      // Apply filters
+>>>>>>> d3e53da465424b88defb9df0f21e679e3081f1bd
       if (filters.city) {
         q = query(q, where('city', '==', filters.city));
       }
@@ -52,7 +64,11 @@ export default function Home() {
         q = query(q, where('area', '<=', filters.areaRange.max));
       }
 
+<<<<<<< HEAD
       // Ordenar por el campo seleccionado
+=======
+      // Apply sorting
+>>>>>>> d3e53da465424b88defb9df0f21e679e3081f1bd
       if (sortField) {
         q = query(q, orderBy(sortField));
       }
@@ -73,6 +89,10 @@ export default function Home() {
     setFlats(flats.map(flat => 
       flat.id === flatId ? { ...flat, isFavorite: !flat.isFavorite } : flat
     ));
+<<<<<<< HEAD
+=======
+    // TODO: Update favorite status in Firebase
+>>>>>>> d3e53da465424b88defb9df0f21e679e3081f1bd
   };
 
   return (
@@ -100,4 +120,7 @@ export default function Home() {
     </div>
   );
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> d3e53da465424b88defb9df0f21e679e3081f1bd
