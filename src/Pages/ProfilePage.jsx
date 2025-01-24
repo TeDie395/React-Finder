@@ -12,7 +12,7 @@ const ProfilePage = () => {
         email: '',
         birthDate: '',
         gender: '',
-        password: ''
+        
     });
     const navigate = useNavigate();
 
