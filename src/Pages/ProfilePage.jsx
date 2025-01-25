@@ -12,8 +12,9 @@ const ProfilePage = () => {
         email: '',
         birthDate: '',
         gender: '',
-        
+        password: ''
     });
+    const [showPassword, setShowPassword] = useState(false); // Estado para mostrar u ocultar la contraseña
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,19 +23,24 @@ const ProfilePage = () => {
         if (storedUser) {
             const userData = JSON.parse(storedUser);
             setUser(userData); 
-            fetchProfileData(userData.uid); 
+            console.log("User stored in localStorage:", userData);
+            fetchProfileData(userData.userId);
         } else {
             console.log("No user found in localStorage");
         }
     }, []);  
 
-    const fetchProfileData = async (uid) => {
+    const fetchProfileData = async (userId) => {
         try {
-            const userDoc = await getDoc(doc(db, 'users', uid));
+            const userDocRef = doc(db, 'users', userId);
+            const userDoc = await getDoc(userDocRef);
+
             if (userDoc.exists()) {
-                setProfileData(userDoc.data()); 
+                const userData = userDoc.data();
+                console.log("Datos del perfil obtenidos de Firestore:", userData);
+                setProfileData(userData);
             } else {
-                console.log("No such document!");
+                console.log("No existe el documento en Firestore con el userId:", userId);
             }
         } catch (error) {
             console.error("Error fetching profile data:", error);
@@ -42,11 +48,15 @@ const ProfilePage = () => {
     };
 
     const handleEdit = () => {
-        navigate(`/profile/update/${user.uid}`);
+        navigate(`/profile/update/${user.userId}`);
     };
 
     const handleGoHome = () => {
         navigate('/home');
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -59,12 +69,28 @@ const ProfilePage = () => {
                 {user ? (
                     <div className="flex flex-col bg-gray-700 w-full rounded-md py-4 px-6 border border-gray-600">
                         <div className="text-base font-semibold text-gray-200">
-                            <p className="mb-2"><strong>Email:</strong> {profileData.email}</p>
-                            <p className="mb-2"><strong>First Name:</strong> {profileData.firstName}</p>
-                            <p className="mb-2"><strong>Last Name:</strong> {profileData.lastName}</p>
-                            <p className="mb-2"><strong>Birth Date:</strong> {profileData.birthDate}</p>
-                            <p className="mb-2"><strong>Gender:</strong> {profileData.gender || 'N/A'}</p>
-                            <p className="mb-2"><strong>Password:</strong> {profileData.password ? profileData.password.replace(/./g, '*') : 'N/A'}</p>
+                            <p className="mb-2"><strong>Email:</strong> {profileData.email || 'N/A'}</p>
+                            <p className="mb-2"><strong>First Name:</strong> {profileData.firstName || 'N/A'}</p>
+                            <p className="mb-2"><strong>Last Name:</strong> {profileData.lastName || 'N/A'}</p>
+                            <p className="mb-2"><strong>Birth Date:</strong> {profileData.birthDate || 'N/A'}</p>
+                            <p className="mb-2"><strong>Gender:</strong> {profileData.gender ? profileData.gender.charAt(0).toUpperCase() + profileData.gender.slice(1) : 'N/A'}</p> {/* Primer letra en mayúscula */}
+                            <p className="mb-2"><strong>Password:</strong> 
+                                <span className="flex items-center">
+                                    <input 
+                                        type={showPassword ? 'text' : 'password'} // Cambiar el tipo según el estado
+                                        value={profileData.password || 'N/A'} 
+                                        readOnly 
+                                        className="bg-transparent text-gray-200 border-none"
+                                    />
+                                    <span 
+                                        onClick={togglePasswordVisibility} 
+                                        className="cursor-pointer ml-2"
+                                        title={showPassword ? "Hide Password" : "Show Password"}
+                                    >
+                                        {showPassword ? '🙈' : '👁️'}
+                                    </span>
+                                </span>
+                            </p>
                         </div>
                         <div className="flex justify-around items-center py-3">
                             <div className="flex gap-2 text-gray-200 hover:scale-110 duration-200 hover:cursor-pointer">
@@ -94,6 +120,12 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+
+
+
+
+
 
 
 
