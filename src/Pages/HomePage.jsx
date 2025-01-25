@@ -12,7 +12,6 @@ export default function Home() {
     priceRange: { min: 0, max: 0 },
     areaRange: { min: 0, max: 0 },
   });
-  console.log("ndjsfbksjd");
   
   const [sortField, setSortField] = useState('');
   const [user, setUser] = useState({ fullName: 'Usuario', role: 'user' });
