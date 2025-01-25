@@ -71,6 +71,9 @@ const ProfileUpdatePage = () => {
         setShowPassword(prevState => !prevState);
     };
 
+    const mensaje = "¡Hola, mundo!";
+    console.log("mensaje");
+
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-white">
             <div className="w-full max-w-lg bg-gray-800 rounded-lg shadow-md p-4">
@@ -179,6 +182,7 @@ const ProfileUpdatePage = () => {
             </div>
         </div>
     );
+    
 }
 
 export default ProfileUpdatePage;
