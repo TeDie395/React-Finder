@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../firebaseconfig'; 
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'; // Importa query, where, orderBy
 import Header from '../components/Header';
 import FilterBar from '../components/FilterBar';
 import FlatsTable from '../components/FlatsTable';
@@ -12,9 +12,8 @@ export default function Home() {
     priceRange: { min: 0, max: 0 },
     areaRange: { min: 0, max: 0 },
   });
-  
   const [sortField, setSortField] = useState('');
-  const [user, setUser] = useState({ fullName: 'Usuario', role: 'user' });
+  const [user, setUser] = useState({ fullName: 'Usuario', isAdmin: false });
 
   // Obtener información del usuario desde localStorage
   useEffect(() => {
@@ -22,7 +21,7 @@ export default function Home() {
     if (storedUser) {
       setUser({
         fullName: `${storedUser.firstName} ${storedUser.lastName}`,
-        role: storedUser.role,
+        isAdmin: storedUser.isAdmin,  // Usar isAdmin aquí
       });
     }
   }, []);  // Solo ejecutarse una vez al cargar
@@ -34,7 +33,7 @@ export default function Home() {
 
   const fetchFlats = async () => {
     try {
-      let q = query(collection(db, 'flats'));
+      let q = query(collection(db, 'flats'));  // Aquí estás utilizando `query` correctamente
 
       // Aplicar filtros
       if (filters.city) {
@@ -53,30 +52,28 @@ export default function Home() {
         q = query(q, where('area', '<=', filters.areaRange.max));
       }
 
-
       // Ordenar por el campo seleccionado
-
       if (sortField) {
-        q = query(q, orderBy(sortField));
+        q = query(q, orderBy(sortField)); // Si hay un campo de ordenación, se aplica
       }
 
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q); // Ejecutar la consulta y obtener los documentos
       const flatsData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      setFlats(flatsData);
+      setFlats(flatsData); // Actualizar el estado con los departamentos obtenidos
     } catch (error) {
-      console.error('Error fetching flats:', error);
+      console.error('Error fetching flats:', error); // Manejo de errores
     }
   };
 
   const handleToggleFavorite = async (flatId) => {
+    // Aquí puedes manejar la lógica de agregar/quitar de favoritos
     setFlats(flats.map(flat => 
       flat.id === flatId ? { ...flat, isFavorite: !flat.isFavorite } : flat
     ));
-
   };
 
   return (
@@ -97,11 +94,12 @@ export default function Home() {
           
           <FlatsTable
             flats={flats}
-            onToggleFavorite={handleToggleFavorite}
+            onToggleFavorite={handleToggleFavorite}  
           />
         </div>
       </main>
     </div>
   );
 }
+
 

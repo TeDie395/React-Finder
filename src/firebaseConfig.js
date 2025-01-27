@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
+// Tu configuración de Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAXH0YUX24fpX_YtAptxwMOP8T89aKfbYM",
     authDomain: "flatfinder-ebcc4.firebaseapp.com",
@@ -12,10 +13,17 @@ const firebaseConfig = {
     measurementId: "G-RQMQB43H3P"
 };
 
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
+
+// Inicializa Auth y Firestore
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+// Exporta la aplicación y los servicios que necesites
+export { app, db, auth };
+
+// Función para obtener los datos del usuario
 export const getUserDataFromFirebase = async (userId) => {
   try {
     const userRef = doc(db, 'users', userId); 
@@ -31,15 +39,4 @@ export const getUserDataFromFirebase = async (userId) => {
     throw error; 
   }
 };
-
-export { db, auth };
-
-
-
-
-
-
-
-
-
 

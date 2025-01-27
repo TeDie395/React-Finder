@@ -9,6 +9,7 @@ const RegisterPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false); // Nuevo estado para el admin
 
     const emailRef = useRef();
     const passwordRef = useRef();
@@ -55,8 +56,7 @@ const RegisterPage = () => {
         if (values.password !== values.confirmPassword) return setErrorMessage('Las contraseñas no son iguales.');
 
         try {
-            
-            const userId = uuidv4(); 
+            const userId = uuidv4(); // Generar un ID único para el usuario
 
             const userRef = doc(db, 'users', userId); 
             await setDoc(userRef, {
@@ -66,6 +66,7 @@ const RegisterPage = () => {
                 birthDate: values.birthDate,
                 gender: values.gender,
                 password: values.password, 
+                isAdmin: isAdmin, // Guardar si es administrador
             });
 
             navigate('/login');
@@ -89,6 +90,18 @@ const RegisterPage = () => {
                     <PasswordField label="Confirm Password" ref={confirmPasswordRef} showPassword={showConfirmPassword} toggleVisibility={() => togglePasswordVisibility('confirmPassword')} />
                     <SelectField label="Gender" ref={genderRef} />
                     <InputField label="Birth Date" type="date" ref={birthDateRef} />
+
+                    {/* Campo para seleccionar si el usuario es administrador */}
+                    <div className="flex items-center mb-4">
+                        <input
+                            type="checkbox"
+                            id="isAdmin"
+                            checked={isAdmin}
+                            onChange={(e) => setIsAdmin(e.target.checked)} // Actualiza el estado de isAdmin
+                            className="mr-2"
+                        />
+                        <label htmlFor="isAdmin" className="text-gray-200">Make this user an Admin</label>
+                    </div>
 
                     <div className="flex justify-center">
                         <button type="submit" className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-2 hover:bg-indigo-600 transition ease-in-out duration-150">
@@ -142,3 +155,4 @@ const SelectField = React.forwardRef(({ label }, ref) => (
 ));
 
 export default RegisterPage;
+

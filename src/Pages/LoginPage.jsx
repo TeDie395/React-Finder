@@ -26,34 +26,46 @@ const LoginPage = () => {
     const handleLogin = async (email, password) => {
         const userService = new UserService();
         try {
-          const result = await userService.login(email, password);
-      
-          if (result && result.data) {
-            const userData = {
-              userId: result.data.id,
-              firstName: result.data.firstName,
-              lastName: result.data.lastName,
-              email: result.data.email,
-              role: result.data.role,
-            };
-      
-            const localStorageService = new LocalStorageService();
-            localStorageService.addLoggedUser(userData);
-      
-           
-            localStorage.setItem('loggedUser', JSON.stringify(userData));  
-      
-            alert(result.message);
-            navigate('/home');  
-          } else {
-            setError('Error al recibir datos del usuario.');
-          }
+            const result = await userService.login(email, password);
+    
+            if (result && result.data) {
+                console.log("Respuesta del servidor:", result.data); // Asegúrate de que 'isAdmin' es true
+    
+                // Crear el objeto con los datos del usuario, incluyendo 'isAdmin'
+                const userData = {
+                    userId: result.data.id,
+                    firstName: result.data.firstName,
+                    lastName: result.data.lastName,
+                    email: result.data.email,
+                    role: result.data.role,
+                    isAdmin: result.data.isAdmin, // Aquí debería ser true si el servidor responde correctamente
+                };                
+    
+                console.log("Guardando en localStorage con isAdmin:", userData.isAdmin); // Verifica el valor aquí
+    
+                // Elimina cualquier usuario previamente guardado en localStorage
+                localStorage.removeItem('loggedUser'); 
+    
+                // Ahora guardamos los datos actualizados en localStorage
+                localStorage.setItem('loggedUser', JSON.stringify(userData));
+                console.log('Usuario guardado en localStorage:', JSON.parse(localStorage.getItem('loggedUser'))); // Verifica que se guardó correctamente
+    
+                // También puedes usar el LocalStorageService si tienes uno configurado
+                const localStorageService = new LocalStorageService();
+                localStorageService.addLoggedUser(userData);
+    
+                alert(result.message);  // O el mensaje que quieras mostrar
+                navigate('/home');  // Redirigir al home después del login
+            } else {
+                setError('Error al recibir datos del usuario.');
+            }
         } catch (err) {
-          console.error('Error de login:', err);
-          setError('Hubo un problema al intentar iniciar sesión. Por favor, intente nuevamente.');
+            console.error('Error de login:', err);
+            setError('Hubo un problema al intentar iniciar sesión. Por favor, intente nuevamente.');
         }
-      };
-      
+    };
+    
+    
 
     const submit = (e) => {
         e.preventDefault();
@@ -126,8 +138,13 @@ const LoginPage = () => {
         </div>
     );
 };
+localStorage.removeItem('loggedUser');  // Elimina el usuario previo antes de guardar el nuevo
 
 export default LoginPage;
+
+
+
+
 
 
 
