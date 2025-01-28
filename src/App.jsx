@@ -9,6 +9,7 @@ import ProfileUpdatePage from './Pages/ProfileUpdatePage';
 import MyFlats from './Pages/MyFlats';
 import AllUsersPage from './Pages/AllUsersPage';
 import Header from './components/Header'; // Asegúrate de importar Header correctamente
+import FavoritesPage from './pages/FavoritesPage';
 
 const App = () => {
     return (
@@ -24,6 +25,7 @@ const App = () => {
                     <Route path="/profile/update/:userId" element={<ProfileUpdatePage />} />
                     <Route path="/my-flats" element={<MyFlats />} />
                     <Route path="/all-users" element={<AllUsersPage />} />
+                    <Route path="/favorites" element={<FavoritesPage />} />
                 </Routes>
             </Router>
         </AuthProvider>
