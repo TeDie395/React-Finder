@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Trash2 } from 'lucide-react';
+import { Heart, Trash2, Edit2 } from 'lucide-react';
 
-export default function FlatsTable({ flats, onToggleFavorite, onDelete }) {
+export default function FlatsTable({ flats, onToggleFavorite, onDelete, onEdit }) {
   return (
     <div className="mt-4 overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -72,6 +72,14 @@ export default function FlatsTable({ flats, onToggleFavorite, onDelete }) {
                       className="p-1 rounded-full text-gray-400 hover:text-red-600"
                     >
                       <Trash2 className="h-5 w-5" />
+                    </button>
+                  )}
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(flat.id)}
+                      className="p-1 rounded-full text-gray-400 hover:text-blue-600"
+                    >
+                      <Edit2 className="h-5 w-5" />
                     </button>
                   )}
                 </div>
