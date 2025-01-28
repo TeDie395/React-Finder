@@ -6,11 +6,11 @@ export default function FilterUsu({ filters, onFilterChange, onSortChange }) {
               <div>
                   <label className="block text-sm font-medium text-gray-700">Nombre</label>
                   <input
-                      type="text"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                      value={filters.firstName}
-                      onChange={(e) => onFilterChange({ ...filters, firstName: e.target.value })}
-                      placeholder="Filtrar por nombre"
+                    type="text"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    value={filters.firstName}
+                    onChange={(e) => onFilterChange({ ...filters, firstName: e.target.value })}
+                    placeholder="Filtrar por nombre"
                   />
               </div>
 

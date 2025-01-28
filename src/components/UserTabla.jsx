@@ -1,70 +1,43 @@
-import { useEffect, useState } from "react";
-import { UserService } from '../service/user';
 import { useNavigate } from "react-router-dom";
 
 const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
-  const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    firstName: null,
-    minAge: null,
-    maxAge: null,
-    role: false,
-  });
-
-  const roles = [
-    { name: 'All Users', code: '' },
-    { name: 'Admin', code: 'admin' },
-    { name: 'User', code: 'user' }
-  ];
-
   const navigate = useNavigate();
-  const userService = new UserService();
 
-  const getUsers = async () => {
-    setLoading(true);
-    const result = await userService.getUsers(filters);
-    setUsers(result.data);
-    setLoading(false);
+  // Acción para alternar entre Admin y User
+  const handleToggleRole = (user) => {
+    const updatedRole = user.isAdmin ? "user" : "admin"; // Alterna entre admin y user
+    onGrantAdmin(user.id, updatedRole); // Llama a onGrantAdmin con el nuevo rol
   };
-
-  useEffect(() => {
-    getUsers();
-  }, [filters]);
 
   const actionBodyTemplate = (user) => {
     return (
       <div className="flex items-center space-x-4">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => { navigate('/profile/update/' + user.id); }}>Editar</button>
-        <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => onGrantAdmin(user.id)}>Conceder Admin</button>
-        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => onDeleteUser(user.id)}>Eliminar</button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={() => {
+            navigate("/profile/update/" + user.id);
+          }}
+        >
+          Editar
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded"
+          onClick={() => handleToggleRole(user)} // Cambiar entre user y admin
+        >
+          {user.isAdmin ? "Quitar Admin" : "Conceder Admin"} {/* Cambia el texto */}
+        </button>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded"
+          onClick={() => onDeleteUser(user.id)}
+        >
+          Eliminar
+        </button>
       </div>
     );
   };
 
-  const firstNameFilterTemplate = () => {
-    return (
-      <input
-        type="text"
-        placeholder="First Name"
-        value={filters.firstName}
-        onChange={(e) => setFilters({ ...filters, firstName: e.target.value })}
-        className="border p-2 rounded"
-      />
-    );
-  };
-
-  const roleFilterTemplate = () => {
-    return (
-      <select
-        value={filters.role}
-        onChange={(e) => setFilters({ ...filters, role: e.target.value })}
-        className="border p-2 rounded"
-      >
-        {roles.map(role => (
-          <option key={role.code} value={role.code}>{role.name}</option>
-        ))}
-      </select>
-    );
+  const getRole = (isAdmin) => {
+    return isAdmin ? "Admin" : "User";
   };
 
   return (
@@ -72,20 +45,40 @@ const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellido</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nombre
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Apellido
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Correo
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Rol
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {users.map((user) => (
             <tr key={user.id}>
-              <td className="px-6 py-4 whitespace-nowrap">{user.firstName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.lastName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm font-medium text-gray-900">
+                  {user.firstName}
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{user.lastName}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{user.email}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{getRole(user.isAdmin)}</div>
+              </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 {actionBodyTemplate(user)}
               </td>
@@ -98,4 +91,3 @@ const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
 };
 
 export default UserTabla;
-  
