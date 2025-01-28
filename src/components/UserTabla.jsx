@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { UserService } from "../../services/user/user.js";
-import { Button, Column, DataTable, InputText, Dropdown } from "../../services/prime/primeComponents.js";
+import { UserService } from '../service/user';
 import { useNavigate } from "react-router-dom";
 
-export const UserTable = () => {
+const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
   const [filters, setFilters] = useState({
     firstName: null,
     minAge: null,
@@ -35,30 +33,37 @@ export const UserTable = () => {
 
   const actionBodyTemplate = (user) => {
     return (
-      <Button type="button" icon="pi pi-pencil" rounded onClick={() => { navigate('/profile/update/' + user.id); }} />
+      <div className="flex items-center space-x-4">
+        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => { navigate('/profile/update/' + user.id); }}>Editar</button>
+        <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={() => onGrantAdmin(user.id)}>Conceder Admin</button>
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={() => onDeleteUser(user.id)}>Eliminar</button>
+      </div>
     );
   };
 
   const firstNameFilterTemplate = () => {
     return (
-      <InputText
-        placeholder={'First Name'}
+      <input
+        type="text"
+        placeholder="First Name"
         value={filters.firstName}
         onChange={(e) => setFilters({ ...filters, firstName: e.target.value })}
+        className="border p-2 rounded"
       />
     );
   };
 
   const roleFilterTemplate = () => {
     return (
-      <Dropdown
+      <select
         value={filters.role}
-        onChange={(e) => setFilters({ ...filters, role: e.value })}
-        options={roles}
-        optionLabel="name"
-        placeholder="Select a Role"
-        className="w-full md:w-14rem"
-      />
+        onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+        className="border p-2 rounded"
+      >
+        {roles.map(role => (
+          <option key={role.code} value={role.code}>{role.name}</option>
+        ))}
+      </select>
     );
   };
 
@@ -82,9 +87,7 @@ export const UserTable = () => {
               <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
               <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex items-center space-x-4">
-                  {actionBodyTemplate(user)}
-                </div>
+                {actionBodyTemplate(user)}
               </td>
             </tr>
           ))}
@@ -94,4 +97,5 @@ export const UserTable = () => {
   );
 };
 
+export default UserTabla;
   

@@ -1,15 +1,26 @@
-// AllUsersPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { UserService } from '../service/user';
 import FilterUsu from '../components/FilterUsu';  // Asegúrate de usar el nombre correcto
+import UserTabla from '../components/UserTabla'; // Importa tu componente UserTabla
 
 const AllUsersPage = () => {
-  // Puedes tener un estado de filtros y orden si es necesario
   const [filters, setFilters] = useState({
     firstName: '',
     minAge: '',
     maxAge: '',
     role: '',
   });
+  const [users, setUsers] = useState([]);
+  const userService = new UserService();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const usersData = await userService.getUsers(filters);
+      setUsers(usersData.filter(user => user.role !== 'admin')); // Filtrar el usuario admin
+    };
+
+    fetchUsers();
+  }, [filters]);
 
   const handleFilterChange = (updatedFilters) => {
     setFilters(updatedFilters);
@@ -20,6 +31,18 @@ const AllUsersPage = () => {
     console.log('Ordenar por:', sortBy);
   };
 
+  const handleGrantAdmin = async (userId) => {
+    // Lógica para conceder permisos de admin
+    await userService.updateUser({ role: 'admin' }, userId);
+    setUsers(users.map(user => user.id === userId ? { ...user, role: 'admin' } : user));
+  };
+
+  const handleDeleteUser = async (userId) => {
+    // Lógica para eliminar usuario
+    await userService.deleteUser(userId);
+    setUsers(users.filter(user => user.id !== userId));
+  };
+
   return (
     <div>
       <FilterUsu 
@@ -28,7 +51,11 @@ const AllUsersPage = () => {
         onSortChange={handleSortChange}
       />
       <h1>Lista de Usuarios</h1>
-      {/* Aquí renderizarías la lista de usuarios filtrados y ordenados */}
+      <UserTabla 
+        users={users} 
+        onGrantAdmin={handleGrantAdmin} 
+        onDeleteUser={handleDeleteUser} 
+      />
     </div>
   );
 };
