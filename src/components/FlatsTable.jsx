@@ -58,6 +58,7 @@ export default function FlatsTable({ flats, onToggleFavorite, onDelete, onEdit }
                   >
                     Ver detalles
                   </Link>
+                  {onToggleFavorite && (
                   <button
                     onClick={() => onToggleFavorite(flat.id)}
                     className={`p-1 rounded-full ${
@@ -66,6 +67,8 @@ export default function FlatsTable({ flats, onToggleFavorite, onDelete, onEdit }
                   >
                     <Heart className="h-5 w-5" fill={flat.isFavorite ? 'currentColor' : 'none'} />
                   </button>
+                  )}
+
                   {onDelete && (
                     <button
                       onClick={() => onDelete(flat.id)}

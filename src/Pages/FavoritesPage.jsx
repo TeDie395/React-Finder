@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { db } from '../firebaseconfig'; // Asegúrate de tener correctamente la configuración de Firebase
+import { db } from '../firebaseConfig'; // Asegúrate de tener correctamente la configuración de Firebase
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore'; // Importa funciones necesarias
 import FlatsTable from '../components/FlatsTable';  // Usamos el componente que ya tienes para mostrar los flats
 import Header from '../components/Header';  // Encabezado de la página (puedes personalizarlo)
@@ -12,7 +12,7 @@ export default function FavoritesPage() {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('loggedUser'));  // Obtener el usuario desde el localStorage (suponiendo que ya tienes ese proceso)
     
-    if (storedUser) {
+    if (storedUser && storedUser.userId) {
       setUser({
         fullName: `${storedUser.firstName} ${storedUser.lastName}`,
         isAdmin: storedUser.isAdmin,  // Si el usuario es admin, puedes usarlo más adelante si lo deseas
@@ -20,31 +20,30 @@ export default function FavoritesPage() {
 
       // Llamamos a la función para obtener los favoritos
       fetchFavorites(storedUser.userId);  // Asumiendo que `userId` es único para cada usuario
+    } else {
+      console.error('Usuario no autenticado o no tiene userId.');
     }
   }, []);
 
   // Función para recuperar los favoritos del usuario desde Firebase
   const fetchFavorites = async (userId) => {
     try {
-      // Obtén todos los IDs de los flats favoritos del usuario
-      const favoritesQuery = query(collection(db, 'users', userId, 'favorites')); // Accedemos a la subcolección 'favorites'
-      const querySnapshot = await getDocs(favoritesQuery);
-
-      // Crear un arreglo con los IDs de los flats favoritos
-      const favoriteFlats = [];
-      querySnapshot.forEach((doc) => {
-        favoriteFlats.push(doc.id); // Aquí almacenamos el ID de cada flat en el que el usuario ha marcado como favorito
-      });
-
-      // Ahora, obtenemos los detalles de cada flat favorito usando los IDs
-      const flatsData = await Promise.all(
-        favoriteFlats.map(async (flatId) => {
-          const flatDoc = await getDoc(doc(db, 'flats', flatId));  // Obtenemos cada flat desde la colección 'flats'
-          return { id: flatDoc.id, ...flatDoc.data() };  // Devolvemos los datos completos del flat
-        })
+      // Obtener todos los flats donde isFavorite es verdadero
+      const flatsQuery = query(
+        collection(db, 'flats'),
+        where('owner.id', '==', userId), // Filtrar por el ID del propietario (si es necesario)
+        where('isFavorite', '==', true)  // Filtramos por flats que son favoritos
       );
+      
+      const querySnapshot = await getDocs(flatsQuery);
 
-      setFavorites(flatsData);  // Actualizamos el estado con la información de los flats favoritos
+      // Mapear los documentos a un array de datos de los flats
+      const favoriteFlats = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),  // Obtener todos los datos del flat
+      }));
+
+      setFavorites(favoriteFlats);  // Actualizamos el estado con los flats favoritos
     } catch (error) {
       console.error('Error fetching favorites:', error);  // Manejo de errores
     }
@@ -56,10 +55,10 @@ export default function FavoritesPage() {
       
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Mis Favoritos</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">My Favorites</h1>
           
           {favorites.length === 0 ? (
-            <p>No tienes departamentos favoritos.</p> // Si no hay favoritos, muestra este mensaje
+            <p>You don't have any favorite Flats</p> // Si no hay favoritos, muestra este mensaje
           ) : (
             <FlatsTable
               flats={favorites} // Pasamos los flats favoritos al componente FlatsTable

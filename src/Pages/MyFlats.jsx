@@ -81,15 +81,6 @@ export default function MyFlats() {
     setShowForm(true); // Mostramos el formulario para editar
   };
 
-  const handleToggleFavorite = (flatId) => {
-    setFlats(
-      flats.map((flat) =>
-        flat.id === flatId ? { ...flat, isFavorite: !flat.isFavorite } : flat
-      )
-    );
-    // TODO: Update favorite status in Firebase
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       <Header user={user} />
@@ -126,7 +117,6 @@ export default function MyFlats() {
 
           <FlatsTable
             flats={flats}
-            onToggleFavorite={handleToggleFavorite}
             onDelete={handleDeleteFlat}
             onEdit={handleEditFlat}
           />

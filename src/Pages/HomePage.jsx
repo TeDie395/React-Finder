@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebaseconfig'; 
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'; // Importa query, where, orderBy
+import { db } from '../firebaseConfig'; 
+import { collection, getDocs, query, where, orderBy, doc, updateDoc } from 'firebase/firestore'; // Importa query, where, orderBy
 import Header from '../components/Header';
 import FilterBar from '../components/FilterBar';
 import FlatsTable from '../components/FlatsTable';
+
 
 export default function Home() {
   const [flats, setFlats] = useState([]);
@@ -69,12 +70,30 @@ export default function Home() {
     }
   };
 
+
   const handleToggleFavorite = async (flatId) => {
-    // Aquí puedes manejar la lógica de agregar/quitar de favoritos
-    setFlats(flats.map(flat => 
-      flat.id === flatId ? { ...flat, isFavorite: !flat.isFavorite } : flat
-    ));
+    try {
+      // Primero, actualizar el estado local (como lo tienes ya)
+      const updatedFlats = flats.map((flat) =>
+        flat.id === flatId ? { ...flat, isFavorite: !flat.isFavorite } : flat
+      );
+      setFlats(updatedFlats);
+  
+      // Obtener el flat actualizado (el nuevo valor de isFavorite)
+      const flatToUpdate = updatedFlats.find((flat) => flat.id === flatId);
+      
+      if (!flatToUpdate) return; // Si no encontramos el flat, no hacemos nada
+  
+      // Actualizar el documento en Firebase
+      const flatRef = doc(db, 'flats', flatId); // Referencia al flat en Firestore
+      await updateDoc(flatRef, { isFavorite: flatToUpdate.isFavorite });
+  
+      console.log('Favorite status updated in Firestore!');
+    } catch (error) {
+      console.error('Error updating favorite status:', error);
+    }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100">

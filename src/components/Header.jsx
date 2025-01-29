@@ -45,7 +45,7 @@ export default function Header() {
             </p>
             
             <nav className="flex items-center space-x-4">
-              <Link to="/" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
+              <Link to="/home" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                 <Search className="h-5 w-5" />
                 <span>Buscar Flats</span>
               </Link>
