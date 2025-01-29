@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Importar Link desde react-router-dom
 import { Home, User, Heart, LogOut, Users, Building, Search, Trash2 } from 'lucide-react';
 
 export default function Header() {
@@ -25,6 +25,10 @@ export default function Header() {
     navigate('/profile'); 
   };
 
+  const handleLogoClick = () => {
+    navigate('/home'); 
+  };
+
   // Si no hay usuario logueado, mostramos solo el header sin opciones de usuario
   if (!user) return null; // Puedes agregar un loading aquí si lo prefieres.
 
@@ -33,10 +37,10 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <button onClick={handleLogoClick} className="flex items-center space-x-2">
               <Building className="h-8 w-8 text-indigo-600" />
               <span className="text-xl font-bold text-gray-900">Flat Finder</span>
-            </Link>
+            </button>
           </div>
 
           <div className="flex items-center space-x-8">
@@ -45,7 +49,7 @@ export default function Header() {
             </p>
             
             <nav className="flex items-center space-x-4">
-              <Link to="/home" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
+              <Link to="/" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                 <Search className="h-5 w-5" />
                 <span>Home</span>
               </Link>

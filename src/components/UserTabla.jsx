@@ -9,6 +9,13 @@ const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
     onGrantAdmin(user.id, updatedRole); // Llama a onGrantAdmin con el nuevo rol
   };
 
+  // Función para calcular la edad
+  const calculateAge = (birthDate) => {
+    const birthYear = new Date(birthDate).getFullYear(); // Convierte la cadena en un objeto Date y obtiene el año
+    const currentYear = new Date().getFullYear();
+    return currentYear - birthYear;
+  };
+
   const actionBodyTemplate = (user) => {
     return (
       <div className="flex items-center space-x-4">
@@ -55,6 +62,9 @@ const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
               Correo
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Edad
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Rol
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -75,6 +85,11 @@ const UserTabla = ({ users = [], onGrantAdmin, onDeleteUser }) => {
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900">{user.email}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">
+                  {calculateAge(user.birthDate)} {/* Aquí se usa el birthDate como cadena */}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900">{getRole(user.isAdmin)}</div>

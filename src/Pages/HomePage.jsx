@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebaseConfig'; 
+import { db } from '../firebaseconfig'; 
 import { collection, getDocs, query, where, orderBy, doc, updateDoc } from 'firebase/firestore'; // Importa query, where, orderBy
 import Header from '../components/Header';
 import FilterBar from '../components/FilterBar';
