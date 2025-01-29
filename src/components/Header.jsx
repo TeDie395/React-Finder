@@ -41,27 +41,27 @@ export default function Header() {
 
           <div className="flex items-center space-x-8">
             <p className="text-gray-600">
-              Hola, <span className="font-semibold">{user.firstName} {user.lastName}</span>
+              Hello, <span className="font-semibold">{user.firstName} {user.lastName}</span>
             </p>
             
             <nav className="flex items-center space-x-4">
               <Link to="/home" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                 <Search className="h-5 w-5" />
-                <span>Buscar Flats</span>
+                <span>Home</span>
               </Link>
               <button onClick={handleProfileClick} className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                 <User className="h-5 w-5" />
-                <span>Mi Perfil</span>
+                <span>My Profile</span>
               </button>
 
               <Link to="/my-flats" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                 <Home className="h-5 w-5" />
-                <span>Mis Flats</span>
+                <span>My Flats</span>
               </Link>
               
               <Link to="/favorites" className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600">
                 <Heart className="h-5 w-5" />
-                <span>Favoritos</span>
+                <span>Favorites</span>
               </Link>
 
               {/* Verificar si el usuario tiene isAdmin como true */}
@@ -79,7 +79,7 @@ export default function Header() {
                 className="flex items-center space-x-1 text-red-600 hover:text-red-700"
               >
                 <Trash2 className="h-5 w-5" />
-                <span>Eliminar Cuenta</span>
+                <span>Delete Account</span>
               </button>
 
               <button
@@ -87,7 +87,7 @@ export default function Header() {
                 className="flex items-center space-x-1 text-gray-600 hover:text-indigo-600"
               >
                 <LogOut className="h-5 w-5" />
-                <span>Cerrar Sesión</span>
+                <span>Logout</span>
               </button>
             </nav>
           </div>

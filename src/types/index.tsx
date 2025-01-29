@@ -26,11 +26,9 @@ export interface Flat {
   export interface FilterOptions {
     city: string;
     priceRange: {
-      min: number;
       max: number;
     };
     areaRange: {
-      min: number;
       max: number;
     };
   }

@@ -10,8 +10,8 @@ export default function Home() {
   const [flats, setFlats] = useState([]);
   const [filters, setFilters] = useState({
     city: '',
-    priceRange: { min: 0, max: 0 },
-    areaRange: { min: 0, max: 0 },
+    priceRange: { max: 0 },
+    areaRange: { max: 0 },
   });
   const [sortField, setSortField] = useState('');
   const [user, setUser] = useState({ fullName: 'Usuario', isAdmin: false });
@@ -38,16 +38,10 @@ export default function Home() {
 
       // Aplicar filtros
       if (filters.city) {
-        q = query(q, where('city', '==', filters.city));
-      }
-      if (filters.priceRange.min > 0) {
-        q = query(q, where('price', '>=', filters.priceRange.min));
+        q = query(q, where('city', '>=', filters.city));
       }
       if (filters.priceRange.max > 0) {
-        q = query(q, where('price', '<=', filters.priceRange.max));
-      }
-      if (filters.areaRange.min > 0) {
-        q = query(q, where('area', '>=', filters.areaRange.min));
+        q = query(q, where('rentPrice', '<=', filters.priceRange.max));
       }
       if (filters.areaRange.max > 0) {
         q = query(q, where('area', '<=', filters.areaRange.max));
@@ -102,7 +96,7 @@ export default function Home() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">
-            Buscar Departamentos
+          Search Flats
           </h1>
           
           <FilterBar

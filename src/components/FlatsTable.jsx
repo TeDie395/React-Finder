@@ -10,19 +10,19 @@ export default function FlatsTable({ flats, onToggleFavorite, onDelete, onEdit }
           <tr>
             {/* Eliminar la columna Propiedad */}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Ubicación
+            Location
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Detalles
+            Details
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Precio
+            Price
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Propietario
+            Owner
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Acciones
+            Actions
             </th>
           </tr>
         </thead>
@@ -56,7 +56,7 @@ export default function FlatsTable({ flats, onToggleFavorite, onDelete, onEdit }
                     to={`/flats/${flat.id}`}
                     className="text-indigo-600 hover:text-indigo-900"
                   >
-                    Ver detalles
+                    See details
                   </Link>
                   {onToggleFavorite && (
                   <button
