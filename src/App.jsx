@@ -10,6 +10,7 @@ import MyFlats from './Pages/MyFlats';
 import AllUsersPage from './Pages/AllUsersPage';
 import Header from './components/Header'; // Asegúrate de importar Header correctamente
 import FavoritesPage from './pages/FavoritesPage';
+import FlatDetailPage from './pages/FlatDetailPage';
 
 const App = () => {
     return (
@@ -26,6 +27,7 @@ const App = () => {
                     <Route path="/my-flats" element={<MyFlats />} />
                     <Route path="/all-users" element={<AllUsersPage />} />
                     <Route path="/favorites" element={<FavoritesPage />} />
+                    <Route path="/flats/:flatId" element={<FlatDetailPage />} />
                 </Routes>
             </Router>
         </AuthProvider>
