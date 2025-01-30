@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+
+.header-bg {
+  background-image: url('/public/Images/fondeedificios.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
