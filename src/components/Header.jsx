@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
-import { Link, useNavigate } from 'react-router-dom'; // Importar Link desde react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Asegúrate de que useNavigate está aquí
 import { Home, User, Heart, LogOut, Users, Building, Search, Trash2 } from 'lucide-react';
 
 export default function Header() {
@@ -33,7 +33,7 @@ export default function Header() {
   if (!user) return null; // Puedes agregar un loading aquí si lo prefieres.
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white shadow-md sticky top-0 z-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">

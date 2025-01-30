@@ -48,21 +48,50 @@ export class UserService {
 
   async getUsers(filters) {
     let queryRef = collection(db, "users");
+  
+    // Filtro por nombre usando firstNameLower (insensible a mayúsculas/minúsculas)
     if (filters.firstName) {
-      queryRef = query(queryRef, where("firstName", "==", filters.firstName));
+      const firstNameLower = filters.firstName.toLowerCase();  // Convierte el nombre en minúsculas
+      queryRef = query(queryRef, where("firstNameLower", ">=", firstNameLower), where("firstNameLower", "<=", firstNameLower + '\uf8ff'));
     }
+  
+    // Filtro por edad
     if (filters.minAge) {
-      queryRef = query(queryRef, where("age", ">=", filters.minAge));
+      queryRef = query(queryRef, where("age", ">=", parseInt(filters.minAge)));
     }
     if (filters.maxAge) {
-      queryRef = query(queryRef, where("age", "<=", filters.maxAge));
+      queryRef = query(queryRef, where("age", "<=", parseInt(filters.maxAge)));
     }
+  
+    // Filtro por rol
     if (filters.role) {
       queryRef = query(queryRef, where("role", "==", filters.role));
     }
+  
+    // Obtener los documentos de la colección con los filtros aplicados
     const snapshot = await getDocs(queryRef);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+    // Si hay filtros por nombre, hacer una búsqueda parcial en el cliente
+    if (filters.firstName) {
+      users = users.filter(user =>
+        user.firstName.toLowerCase().includes(filters.firstName.toLowerCase()) // Comparar con la búsqueda en minúsculas
+      );
+    }
+  
+    // Ordenar los usuarios si es necesario
+    if (filters.sortBy) {
+      users.sort((a, b) => {
+        if (a[filters.sortBy] < b[filters.sortBy]) return -1;
+        if (a[filters.sortBy] > b[filters.sortBy]) return 1;
+        return 0;
+      });
+    }
+  
+    return users;
   }
+  
+  
 
   async deleteUser(id) {
     const userRef = doc(db, "users", id);

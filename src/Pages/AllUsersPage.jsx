@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { UserService } from "../service/user";
 import FilterUsu from "../components/FilterUsu";
 import UserTabla from "../components/UserTabla";
-import Header from "../components/Header"; // Asegúrate de importar Header
+import Header from "../components/Header";
 
 const AllUsersPage = () => {
   const [filters, setFilters] = useState({
@@ -10,20 +10,21 @@ const AllUsersPage = () => {
     minAge: "",
     maxAge: "",
     role: "",
+    sortBy: "",
   });
-  const [users, setUsers] = useState([]); // Mantén los usuarios en el estado
-  const [user, setUser] = useState({ fullName: 'Usuario', isAdmin: false }); // Definir el estado del usuario
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState({ fullName: 'Usuario', isAdmin: false });
   const userService = new UserService();
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('loggedUser'));
     if (storedUser) {
       setUser({
-        fullName: `${storedUser.firstName} ${storedUser.lastName}`, // Corrección: template literal con comillas invertidas
-        isAdmin: storedUser.isAdmin,  // Usar isAdmin aquí
+        fullName: `${storedUser.firstName} ${storedUser.lastName}`, // Corrección aquí
+        isAdmin: storedUser.isAdmin,
       });
     }
-  }, []);  // Solo ejecutarse una vez al cargar
+  }, []);
   
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const AllUsersPage = () => {
       setUsers(
         usersData.map((user) => ({
           ...user,
-          role: user.isAdmin ? "admin" : "user", // Aquí asignamos el rol según isAdmin
+          role: user.isAdmin ? "admin" : "user",
         }))
       );
     };
@@ -45,11 +46,10 @@ const AllUsersPage = () => {
   };
 
   const handleSortChange = (sortBy) => {
-    console.log("Ordenar por:", sortBy);
+    setFilters({ ...filters, sortBy });
   };
 
   const handleGrantAdmin = async (userId, newRole) => {
-    // Lógica para cambiar el rol entre 'admin' y 'user'
     await userService.updateUser({ isAdmin: newRole === "admin" }, userId);
     setUsers(
       users.map((user) =>
@@ -64,13 +64,13 @@ const AllUsersPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">  {/* Clase de fondo similar a Home */}
-      <Header user={user} />  {/* Aquí se renderiza el Header con la información del usuario */}
+    <div className="min-h-screen bg-gray-100">
+      <Header user={user} />
 
-      <main className="max-w-7xl mx-auto py-2 sm:px-6 lg:px-8">  {/* Contenedor principal centrado */}
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-2 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">  {/* Título de la página */}
-            Todos los Usuarios
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 mt-40">
+            All Users
           </h1>
 
           <FilterUsu
@@ -78,12 +78,14 @@ const AllUsersPage = () => {
             onFilterChange={handleFilterChange}
             onSortChange={handleSortChange}
           />
-          
-          <UserTabla
-            users={users}
-            onGrantAdmin={handleGrantAdmin}
-            onDeleteUser={handleDeleteUser}
-          />
+
+          <div className="overflow-y-auto max-h-[70vh] mt-4">
+            <UserTabla
+              users={users}
+              onGrantAdmin={handleGrantAdmin}
+              onDeleteUser={handleDeleteUser}
+            />
+          </div>
         </div>
       </main>
     </div>
