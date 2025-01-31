@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { setDoc, doc, getDocs, query, collection, where } from 'firebase/firestore'; // Importa query y where
 import { db } from '../firebaseconfig';
 import { v4 as uuidv4 } from 'uuid';
+import "./home.css";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -87,7 +88,7 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-white">
+        <div className="min-h-screen bg-gray-100 bg-image">
             <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-4 sm:px-6 md:px-8">
                 <h2 className="text-2xl font-bold text-gray-200 mb-4 text-center">Register</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">

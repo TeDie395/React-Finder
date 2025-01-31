@@ -4,6 +4,7 @@ import FilterUsu from "../components/FilterUsu";
 import UserTabla from "../components/UserTabla";
 import Header from "../components/Header";
 
+
 const AllUsersPage = () => {
   const [filters, setFilters] = useState({
     firstName: "",
@@ -13,11 +14,11 @@ const AllUsersPage = () => {
     sortBy: "",
   });
   const [users, setUsers] = useState([]);
-  const [user, setUser] = useState({ fullName: "Usuario", isAdmin: false });
+  const [user, setUser] = useState({ fullName: 'Usuario', isAdmin: false });
   const userService = new UserService();
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    const storedUser = JSON.parse(localStorage.getItem('loggedUser'));
     if (storedUser) {
       setUser({
         fullName: `${storedUser.firstName} ${storedUser.lastName}`, // Corrección aquí
@@ -25,6 +26,7 @@ const AllUsersPage = () => {
       });
     }
   }, []);
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -64,20 +66,20 @@ const AllUsersPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header user={user} /> {/* Header responsivo con el menú hamburguesa */}
+      <Header user={user} />
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-2 sm:px-0">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6 mt-40">All Users</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 mt-40">
+            All Users
+          </h1>
 
-          {/* Filtros para la búsqueda */}
           <FilterUsu
             filters={filters}
             onFilterChange={handleFilterChange}
             onSortChange={handleSortChange}
           />
 
-          {/* Contenedor para la tabla de usuarios */}
           <div className="overflow-y-auto max-h-[70vh] mt-4">
             <UserTabla
               users={users}
@@ -92,3 +94,7 @@ const AllUsersPage = () => {
 };
 
 export default AllUsersPage;
+
+
+
+

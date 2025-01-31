@@ -4,7 +4,7 @@ import { collection, getDocs, query, where, orderBy, doc, updateDoc } from 'fire
 import Header from '../components/Header';
 import FilterBar from '../components/FilterBar';
 import FlatsTable from '../components/FlatsTable';
-
+import "./home.css";
 
 export default function Home() {
   const [flats, setFlats] = useState([]);
@@ -90,7 +90,7 @@ export default function Home() {
   
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 bg-image">
       <Header user={user} />
       
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

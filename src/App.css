@@ -42,7 +42,7 @@
 }
 
 .header-bg {
-  background-image: url('/public/Images/fondeedificios.jpg');
+  /* background-image: url('/public/Images/fondeedificios.jpg'); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

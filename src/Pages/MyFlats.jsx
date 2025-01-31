@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import FlatForm from '../components/forms/FlatForm';
 import FlatsTable from '../components/FlatsTable';
 import { PlusCircle, MinusCircle } from 'lucide-react';
+import "./home.css";
 
 export default function MyFlats() {
   const [flats, setFlats] = useState([]);
@@ -82,7 +83,7 @@ export default function MyFlats() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 bg-image">
       <Header user={user} />
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
